@@ -100,7 +100,7 @@ const parse = (buffer, unify) => {
       const x = getCoord([ src[i + 15], src[i + 14], src[i + 13], src[i + 12] ]);
       const y = getCoord([ src[i + 19], src[i + 18], src[i + 17], src[i + 16] ]);
       const z = getCoord([ src[i + 23], src[i + 22], src[i + 21], src[i + 20] ]);
-      vertex_data.push(x, y, z);
+      vertex_data.push(x * 0.4, y * 0.4, z * 0.4);
     }
 
     if (!aux_obj[v2string] || !unify) {
@@ -108,7 +108,7 @@ const parse = (buffer, unify) => {
       const x = getCoord([ src[i + 27], src[i + 26], src[i + 25], src[i + 24] ]);
       const y = getCoord([ src[i + 31], src[i + 30], src[i + 29], src[i + 28] ]);
       const z = getCoord([ src[i + 35], src[i + 34], src[i + 33], src[i + 32] ]);
-      vertex_data.push(x, y, z);
+      vertex_data.push(x * 0.4, y * 0.4, z * 0.4);
     }
 
     if (!aux_obj[v3string] || !unify) {
@@ -116,7 +116,7 @@ const parse = (buffer, unify) => {
       const x = getCoord([ src[i + 39], src[i + 38], src[i + 37], src[i + 36] ]);
       const y = getCoord([ src[i + 43], src[i + 42], src[i + 41], src[i + 40] ]);
       const z = getCoord([ src[i + 47], src[i + 46], src[i + 45], src[i + 44] ]);
-      vertex_data.push(x, y, z);
+      vertex_data.push(x * 0.4, y * 0.4, z * 0.4);
     }
 
     const v1 = aux_obj[v1string];
