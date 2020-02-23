@@ -10,6 +10,7 @@ id-match,
 id-length,
 max-len,
 no-sync,
+complexity,
 */
 
 const fs = require('fs');
@@ -81,7 +82,7 @@ const parseSignificand = (bArr) => {
 const getCoord = (coord) => parseSign(coord) * parseExponent(coord) * parseSignificand(coord);
 
 // ArrayBuffer, Buffer input
-const parse = (buffer, unify) => {
+const parse = (buffer, { unify, scale_x, scale_y, scale_z, scale, add }) => {
   // slice 84 bytes header
   const src = new Uint8Array(buffer).slice(84);
 
@@ -97,26 +98,44 @@ const parse = (buffer, unify) => {
 
     if (!aux_obj[v1string] || !unify) {
       aux_obj[v1string] = counter++;
+
       const x = getCoord([ src[i + 15], src[i + 14], src[i + 13], src[i + 12] ]);
       const y = getCoord([ src[i + 19], src[i + 18], src[i + 17], src[i + 16] ]);
       const z = getCoord([ src[i + 23], src[i + 22], src[i + 21], src[i + 20] ]);
-      vertex_data.push(x * 0.4, y * 0.4, z * 0.4);
+
+      vertex_data.push(x * (scale_x || scale || 1), y * (scale_y || scale || 1), z * (scale_x || scale || 1));
+
+      if (add) {
+        vertex_data.push(parseFloat(add));
+      }
     }
 
     if (!aux_obj[v2string] || !unify) {
       aux_obj[v2string] = counter++;
+
       const x = getCoord([ src[i + 27], src[i + 26], src[i + 25], src[i + 24] ]);
       const y = getCoord([ src[i + 31], src[i + 30], src[i + 29], src[i + 28] ]);
       const z = getCoord([ src[i + 35], src[i + 34], src[i + 33], src[i + 32] ]);
-      vertex_data.push(x * 0.4, y * 0.4, z * 0.4);
+
+      vertex_data.push(x * (scale_x || scale || 1), y * (scale_y || scale || 1), z * (scale_y || scale || 1));
+
+      if (add) {
+        vertex_data.push(parseFloat(add));
+      }
     }
 
     if (!aux_obj[v3string] || !unify) {
       aux_obj[v3string] = counter++;
+
       const x = getCoord([ src[i + 39], src[i + 38], src[i + 37], src[i + 36] ]);
       const y = getCoord([ src[i + 43], src[i + 42], src[i + 41], src[i + 40] ]);
       const z = getCoord([ src[i + 47], src[i + 46], src[i + 45], src[i + 44] ]);
-      vertex_data.push(x * 0.4, y * 0.4, z * 0.4);
+
+      vertex_data.push(x * (scale_x || scale || 1), y * (scale_y || scale || 1), z * (scale_z || scale || 1));
+
+      if (add) {
+        vertex_data.push(parseFloat(add));
+      }
     }
 
     const v1 = aux_obj[v1string];
@@ -129,10 +148,11 @@ const parse = (buffer, unify) => {
   return { vertex_data, index_data };
 };
 
-const { src, dst, unify } = getCommandLineArgs();
+const args = getCommandLineArgs();
+const { src, dst } = args;
 
 if (!src) {
   throw new Error('ERROR: no source');
 }
 
-fs.writeFileSync(dst || `stl-to-json-${ new Date().toISOString().replace(/\./g, '-').replace(/:/g, '-') }.json`, JSON.stringify(parse(fs.readFileSync(src), unify)), 'utf8');
+fs.writeFileSync(dst || `stl-to-json-${ new Date().toISOString().replace(/\./g, '-').replace(/:/g, '-') }.json`, JSON.stringify(parse(fs.readFileSync(src), args), 'utf8'));
